@@ -77,6 +77,33 @@ class MazeSolver extends Grid{
         }        
         return false;
     }
+    solve(x1,y1, x2, y2){
+        // solve from coordinates (x, y)
+        var stack = []; // maintain coordinates
+        var visited = [];
+        // check if initial position can be traversed
+        if(this.canTraverse(x1,y1)){
+            visited.push([x1,y1]);
+            stack.push([x1,y1]);
+        }
+        var solved = false;
+        while(stack.length > 0){
+            var currentPos = stack.pop();
+            if(currentPos[0] === x2 && currentPos[1] === y2){
+                solved = true;
+                break;
+            }
+            
+            var neighbours = this.getNeighbours(currentPos[0], currentPos[1]);
+            for(var i = 0; i < neighbours.length; i++){
+                if (!this.checkVisited(neighbours[i][0],neighbours[i][1],visited)){
+                    visited.push([neighbours[i][0],neighbours[i][1]]);
+                    stack.push([neighbours[i][0],neighbours[i][1]]);
+                }
+            }
+        }
+        return solved;
+    }
 }
 
 
