@@ -11,19 +11,22 @@ const getUser = username => {
         userNameElement.style.fontSize = '24px';
 
         const userDescripcionElement = document.createElement('p');
-        userDescripcionElement.textContent = data.bio;
+        userDescripcionElement.textContent = data.company;
         userDescripcionElement.style.fontSize = '18px';
-
-        const userBlogElement = document.createElement('a');
-        userBlogElement.href = data.blog;
-        userBlogElement.textContent = userBlogElement.href;
 
         const perfil = document.getElementById('perfil');
         perfil.innerHTML = '';
         perfil.appendChild(userImageElement);
         perfil.appendChild(userNameElement);
         perfil.appendChild(userDescripcionElement);
-        perfil.appendChild(userBlogElement);
+        if(data.blog !== ''){
+            const userBlogElement = document.createElement('a');
+            userBlogElement.href = data.blog;
+            userBlogElement.textContent = userBlogElement.href;
+            perfil.appendChild(userBlogElement);
+
+        }        
+
 
 
         
