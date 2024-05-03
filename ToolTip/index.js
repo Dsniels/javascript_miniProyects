@@ -22,80 +22,77 @@ const svgs = `
   </div>
 `;
 
-
 // Definir el elemento tooltip
 
-const tooltip = document.createElement('div');
+const tooltip = document.createElement("div");
 
-tooltip.classList.add('tooltip');
+tooltip.classList.add("tooltip");
 tooltip.innerHTML = svgs;
 
-const tooltipTail = document.createElement('div');
-tooltipTail.classList.add('tooltip_tail');
+const tooltipTail = document.createElement("div");
+tooltipTail.classList.add("tooltip_tail");
 
-const article = document.getElementsByClassName('articulo')[0];
+const article = document.getElementsByClassName("articulo")[0];
 
 function displayTooltip() {
-    const selection = document.getSelection();
-    const anchorNode = selection.anchorNode;
-    const focusNode = selection.focusNode;
+  const selection = document.getSelection();
+  const anchorNode = selection.anchorNode;
+  const focusNode = selection.focusNode;
 
+  document.body.appendChild(tooltip);
+  document.body.appendChild(tooltipTail);
 
-    document.body.appendChild(tooltip);
-    document.body.appendChild(tooltipTail);
+  const tooltipWidht = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+  const tooltipTailWidth = tooltipTail.offsetWidth;
+  const tooltipTailHeight = tooltipTail.offsetHeight;
+  // Esta linea obtiene la posicion del texto seleccionado en la pagina
+  const rangeRect = selection.getRangeAt(0).getClientRects();
 
-    const tooltipWidht = tooltip.offsetWidth;
-    const tooltipHeight = tooltip.offsetHeight; 
-    const tooltipTailWidth = tooltipTail.offsetWidth;
-    const tooltipTailHeight = tooltipTail.offsetHeight; 
-// Esta linea obtiene la posicion del texto seleccionado en la pagina
-    const rangeRect = selection.getRangeAt(0).getClientRects();
+  const parentElemen = selection.anchorNode.parentElement; //punto de inicio de la seleccion
+  const y = rangeRect[0].y;
+  const x =
+    rangeRect.length > 1
+      ? parentElemen.offsetLeft + parentElemen.offsetWidth / 2
+      : rangeRect[0].x + rangeRect[0].width / 2;
 
-    const parentElemen = selection.anchorNode.parentElement; //punto de inicio de la seleccion
-    const y = rangeRect[0].y;
-    const x = rangeRect.length > 1 ? parentElemen.offsetLeft + parentElemen.offsetWidth/2 :
-        rangeRect[0].x + rangeRect[0].width/2;
+  tooltip.style.top = `${y - tooltipHeight - tooltipTailHeight}px`;
+  tooltip.style.left = `${x - tooltipWidht / 2}px`;
 
-    tooltip.style.top = `${y - tooltipHeight - tooltipTailHeight}px`;
-    tooltip.style.left = `${x - tooltipWidht/2}px`;
-
-    tooltipTail.style.top = `${y - tooltipTailHeight/2}px`;
-    tooltipTail.style.left = `${x - tooltipTailWidth/2}px`;
+  tooltipTail.style.top = `${y - tooltipTailHeight / 2}px`;
+  tooltipTail.style.left = `${x - tooltipTailWidth / 2}px`;
 }
 
 function removeTooltip() {
-    if(document.body.contains(tooltip)){
-        document.body.removeChild(tooltip);
-        document.body.removeChild(tooltipTail);
-    }
+  if (document.body.contains(tooltip)) {
+    document.body.removeChild(tooltip);
+    document.body.removeChild(tooltipTail);
+  }
 }
 
 let selectionQueue = false;
 
 document.onmouseup = () => {
+  if (selectionQueue) {
+    displayTooltip();
+  } else {
+    removeTooltip();
+  }
 
-    if (selectionQueue) {
-        displayTooltip();
-    } else{
-        removeTooltip();
-    }
+  selectionQueue = false;
+};
 
+document.addEventListener("selectionchange", (e) => {
+  const selection = document.getSelection();
+  if (selection.type !== "Range") {
     selectionQueue = false;
+    return;
+  }
 
-}
+  if (selection.anchorNode !== selection.focusNode) {
+    selectionQueue = false;
+    return;
+  }
 
-document.addEventListener('selectionchange', (e) => {
-    const selection = document.getSelection();
-    if(selection.type !== 'Range'){
-        selectionQueue = false;
-        return;
-    }
-
-    if(selection.anchorNode !== selection.focusNode){
-        selectionQueue = false;
-        return;
-    }
-
-    selectionQueue = true;
+  selectionQueue = true;
 });
-
