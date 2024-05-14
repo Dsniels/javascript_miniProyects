@@ -1,4 +1,5 @@
 const getUser = username => {
+    if(!username) throw new Error("No se ingreso un usuario"); 
     fetch(`https://api.github.com/users/${username}`).then(response => response.json())
     .then(data =>{
         const userImageElement = document.createElement('img');
@@ -26,20 +27,28 @@ const getUser = username => {
             perfil.appendChild(userBlogElement);
 
         }        
-
-
-
-        
-
     }).catch(error => {
         console.log('Error: ', error);
     });
 }
 
+const getCharacter = async () => {
+    return new Promise( (resolve, reject) =>{
+        fetch('https://swapi.dev/api/people/?search=r2').then(response => resolve(response.json())).catch(err => reject(err))
+    });
+   
+};
+
+const characters = getCharacter().then(data => console.log(data.results[0]))
+
 
 const form = document.querySelector('form');
-
 form.addEventListener('submit',e => {
-    e.preventDefault();
-    getUser(form.elements.search.value);
+    try {
+        e.preventDefault();
+        getUser(form.elements.search.value);
+    } catch (error) {
+        window.alert(error.message);
+    }
+
 });
